@@ -1,0 +1,10 @@
+{
+  "name": "Vanilla",
+  "version": 1.0,
+  "description": "Standard mod in chess game",
+  "author": "umioMikket",
+  "website": null,
+
+  "main": "com.umiomikket.chessgame.vanilla.Vanilla",
+  "depends": []
+}

@@ -3,14 +3,19 @@ package com.umiomikket.chessgame.vanilla.figures;
 import com.umiomikket.chessgame.ChessGame;
 import com.umiomikket.chessgame.chess.*;
 import com.umiomikket.chessgame.vanilla.events.EventFigureGetPositions;
+import com.umiomikket.chessgame.vanilla.events.EventStatisticsGetWorkingTime;
 
 import java.util.ArrayList;
 
 public class FigureKnight extends Figure {
+    private long howLongUpdate;
+
     public FigureKnight() {
         super(ChessGame.getModificationsManager().getModification("vanilla"), "knight");
         setSpriteBlackTeam("./assets/B_Knight.png");
         setSpriteWhiteTeam("./assets/W_Knight.png");
+
+        howLongUpdate = 0l;
 
         addEventClass(this);
     }
@@ -18,6 +23,7 @@ public class FigureKnight extends Figure {
     @EventHandler
     public void getFigurePositions(EventFigureGetPositions event) {
         if (event.getFigure() != this) return;
+        long startTime = System.nanoTime();
 
         ArrayList<Integer[]> positions = new ArrayList<>();
 
@@ -42,5 +48,11 @@ public class FigureKnight extends Figure {
         }
 
         event.setFigurePositions(positions);
+        howLongUpdate = System.nanoTime() - startTime;
+    }
+
+    @EventHandler
+    public void getWorkingTime(EventStatisticsGetWorkingTime event) {
+        event.addWorkingTime("figureKnight > getFigurePositions", howLongUpdate);
     }
 }

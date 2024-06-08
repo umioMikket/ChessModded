@@ -5,11 +5,13 @@ import com.umiomikket.chessgame.chess.*;
 import com.umiomikket.chessgame.vanilla.Vanilla;
 import com.umiomikket.chessgame.vanilla.events.EventFigureEaten;
 import com.umiomikket.chessgame.vanilla.events.EventFigureGetPositions;
+import com.umiomikket.chessgame.vanilla.events.EventStatisticsGetWorkingTime;
 
 import java.awt.*;
 import java.util.ArrayList;
 
 public class FigureKing extends Figure {
+    private long howLongUpdate;
     private Team teamWin;
 
     public FigureKing() {
@@ -17,12 +19,15 @@ public class FigureKing extends Figure {
         setSpriteBlackTeam("./assets/B_King.png");
         setSpriteWhiteTeam("./assets/W_King.png");
 
+        howLongUpdate = 0l;
+
         addEventClass(this);
     }
 
     @EventHandler
     public void getFigurePositions(EventFigureGetPositions event) {
         if (event.getFigure() != this) return;
+        long startTime = System.nanoTime();
 
         ArrayList<Integer[]> positions = new ArrayList<>();
 
@@ -47,6 +52,7 @@ public class FigureKing extends Figure {
         }
 
         event.setFigurePositions(positions);
+        howLongUpdate = System.nanoTime() - startTime;
     }
 
     @EventHandler
@@ -62,5 +68,10 @@ public class FigureKing extends Figure {
         );
 
         ((Vanilla) getMod()).screenEndGame.show();
+    }
+
+    @EventHandler
+    public void getWorkingTime(EventStatisticsGetWorkingTime event) {
+        event.addWorkingTime("figureKing > getFigurePositions", howLongUpdate);
     }
 }

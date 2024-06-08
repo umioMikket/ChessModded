@@ -4,10 +4,13 @@ import com.umiomikket.chessgame.ChessGame;
 import com.umiomikket.chessgame.chess.*;
 import com.umiomikket.chessgame.vanilla.events.EventFigureGetPositions;
 import com.umiomikket.chessgame.vanilla.events.EventFigureMoved;
+import com.umiomikket.chessgame.vanilla.events.EventStatisticsGetWorkingTime;
 
 import java.util.ArrayList;
 
 public class FigurePawn extends Figure {
+    private long howLongUpdate;
+
     private boolean isWhiteMoved2Y;
     private boolean isBlackMoved2Y;
 
@@ -17,6 +20,8 @@ public class FigurePawn extends Figure {
         setSpriteWhiteTeam("./assets/W_Pawn.png");
         getEventManager().addEventClass(this);
 
+        howLongUpdate = 0l;
+
         isWhiteMoved2Y = false;
         isBlackMoved2Y = false;
     }
@@ -24,6 +29,7 @@ public class FigurePawn extends Figure {
     @EventHandler
     public void getFigurePositions(EventFigureGetPositions event) {
         if (event.getFigure() != this) return;
+        long startTime = System.nanoTime();
 
         ArrayList<Integer[]> positions = new ArrayList<>();
 
@@ -59,6 +65,7 @@ public class FigurePawn extends Figure {
         }
 
         event.setFigurePositions(positions);
+        howLongUpdate = System.nanoTime() - startTime;
     }
 
     @EventHandler
@@ -67,5 +74,10 @@ public class FigurePawn extends Figure {
 
         if (event.getMoveY() == 2) isWhiteMoved2Y = true;
         if (event.getMoveY() == -2) isBlackMoved2Y = true;
+    }
+
+    @EventHandler
+    public void getWorkingTime(EventStatisticsGetWorkingTime event) {
+        event.addWorkingTime("figurePawn > getFigurePositions", howLongUpdate);
     }
 }

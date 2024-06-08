@@ -88,7 +88,7 @@ public class Vanilla extends Modification {
         ChessGame.setHighlightFigurePositions(highlightPositions);
 
         if (highlightPositions.size() == 0 || whoCreatedCheckmate == null) return;
-        if (whoCreatedCheckmate != event.newTeam) return;
+        if (whoCreatedCheckmate != ChessGame.getSelectedTeam()) return;
 
         screenEndGame.setMessage(
             String.format(

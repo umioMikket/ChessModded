@@ -5,11 +5,12 @@ import com.umiomikket.chessgame.chess.EventHandler;
 import com.umiomikket.chessgame.chess.Figure;
 import com.umiomikket.chessgame.chess.Modification;
 import com.umiomikket.chessgame.vanilla.events.EventRender;
+import com.umiomikket.chessgame.vanilla.events.EventStatisticsGetWorkingTime;
 import com.umiomikket.chessgame.vanilla.events.EventUpdate;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
+import java.util.*;
 
 public class ScreenStatistic {
     private ArrayList<String> statistics;
@@ -79,6 +80,24 @@ public class ScreenStatistic {
         statistics.add("Size: " + ChessGame.getBoard().width + "x" + ChessGame.getBoard().height);
 
         statistics.add("");
+
+        EventStatisticsGetWorkingTime event = new EventStatisticsGetWorkingTime();
+        ChessGame.getEventManager().playEvent(event);
+
+        HashMap<String, Long> map = event.getTimeStatistic();
+
+        Object[] sortMap = map.entrySet().toArray();
+        Arrays.sort(sortMap, new Comparator() {
+            public int compare(Object o1, Object o2) {
+                return ((Map.Entry<String, Long>) o2).getValue()
+                        .compareTo(((Map.Entry<String, Long>) o1).getValue());
+            }
+        });
+
+        statistics.add("Update time statistics:");
+
+        for (Object e : sortMap)
+        statistics.add(((Map.Entry<String, Long>) e).getKey() + ": " + ((Map.Entry<String, Long>) e).getValue());
     }
 
     public boolean isEnabled() { return isEnabled; }

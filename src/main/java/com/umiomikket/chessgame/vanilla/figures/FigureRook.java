@@ -3,14 +3,19 @@ package com.umiomikket.chessgame.vanilla.figures;
 import com.umiomikket.chessgame.ChessGame;
 import com.umiomikket.chessgame.chess.*;
 import com.umiomikket.chessgame.vanilla.events.EventFigureGetPositions;
+import com.umiomikket.chessgame.vanilla.events.EventStatisticsGetWorkingTime;
 
 import java.util.ArrayList;
 
 public class FigureRook extends Figure {
+    private long howLongUpdate;
+
     public FigureRook() {
         super(ChessGame.getModificationsManager().getModification("vanilla"), "rook");
         setSpriteBlackTeam("./assets/B_Rook.png");
         setSpriteWhiteTeam("./assets/W_Rook.png");
+
+        howLongUpdate = 0l;
 
         addEventClass(this);
     }
@@ -18,6 +23,7 @@ public class FigureRook extends Figure {
     @EventHandler
     public void getFigurePositions(EventFigureGetPositions event) {
         if (event.getFigure() != this) return;
+        long startTime = System.nanoTime();
 
         ArrayList<Integer[]> positions = new ArrayList<>();
         BoardCell cell = event.getCell();
@@ -39,5 +45,11 @@ public class FigureRook extends Figure {
         }
 
         event.setFigurePositions(positions);
+        howLongUpdate = System.nanoTime() - startTime;
+    }
+
+    @EventHandler
+    public void getWorkingTime(EventStatisticsGetWorkingTime event) {
+        event.addWorkingTime("figureRook > getFigurePositions", howLongUpdate);
     }
 }
